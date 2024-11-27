@@ -146,15 +146,15 @@ class GUI(tkinter.Frame):
             audio.stop_running()
 
     def handle_event(self, event, param):
-        if event == "turnMagnetronOn":
+        if event == "turn_magnetron_on":
             self.running = True
             self.refresh_background()
-        elif event == "turnMagnetronOff":
+        elif event == "turn_magnetron_off":
             self.running = False
             self.refresh_background()
-        elif event == "setDisplayedTime":
+        elif event == "set_displayed_time":
             self.setTime(param)
-        elif event == "ringBell":
+        elif event == "ring_bell":
             audio.play_bell()
                              
     def setTime(self, time: int):

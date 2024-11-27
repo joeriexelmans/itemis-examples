@@ -1,9 +1,11 @@
 import sys
 import importlib.util
+import atexit
 
 import tkinter
 from tkinter.constants import BOTH, NO
 from lib import gui, simulator
+from lib.test import print_trace
 
 def my_import(name, path):
     spec = importlib.util.spec_from_file_location(name, path)
@@ -13,6 +15,9 @@ def my_import(name, path):
     return module
 
 def run_demo(model_module, time_scale):
+    input_trace = []
+    output_trace = []
+
     sc = model_module.Statechart()
     controller = simulator.Controller()
     sc.timer_service = simulator.TimerService(controller, time_scale)
@@ -30,7 +35,8 @@ def run_demo(model_module, time_scale):
     sim = simulator.RealTimeSimulation(controller, toplevel, on_update)
 
     def send_event(event: str):
-        sim.add_input(sc, event)
+        timestamp = sim.add_input(sc, event)
+        input_trace.append((timestamp, event, None))
 
     g.send_event = send_event
 
@@ -41,17 +47,32 @@ def run_demo(model_module, time_scale):
         def next(self, value=None):
             print("Time = %03dms - Output event: %s" % (controller.get_simtime_seconds()*1000, self.event))
             g.handle_event(self.event, value)
+            output_trace.append((controller.simulated_time, self.event, value))
 
-    sc.turn_magnetron_on_observable.subscribe(MyObserver("turnMagnetronOn"))
-    sc.turn_magnetron_off_observable.subscribe(MyObserver("turnMagnetronOff"))
-    sc.set_displayed_time_observable.subscribe(MyObserver("setDisplayedTime"))
-    sc.ring_bell_observable.subscribe(MyObserver("ringBell"))
+    sc.turn_magnetron_on_observable.subscribe(MyObserver("turn_magnetron_on"))
+    sc.turn_magnetron_off_observable.subscribe(MyObserver("turn_magnetron_off"))
+    sc.set_displayed_time_observable.subscribe(MyObserver("set_displayed_time"))
+    sc.ring_bell_observable.subscribe(MyObserver("ring_bell"))
+
+    def print_exit_trace():
+        print("Exiting...")
+        print("Full trace (you can add this to the SCENARIOS in test.py)...")
+        print("{")
+        print("    \"name\": \"interactive\",")
+        print("    \"input_trace\": ", end='')
+        print_trace(input_trace, 4)
+        print(",")
+        print("    \"output_trace\": ", end='')
+        print_trace(output_trace, 4)
+        print(",")
+        print("}")
+
+    atexit.register(print_exit_trace)
 
     controller.start()
     sc.enter()
     sim.interrupt() # schedule first wakeup
     tk.mainloop()
-
 
 if __name__ == "__main__":
     if len(sys.argv) < 2:
@@ -59,7 +80,7 @@ if __name__ == "__main__":
         print("  python run.py MODELNAME [TIME_SCALE]")
         print("")
         print("Example:")
-        print("  python run.py 50_ChildLock 2.0")
+        print("  python run.py 50_History 2.0")
         sys.exit(1)
 
     model_name = sys.argv[1]

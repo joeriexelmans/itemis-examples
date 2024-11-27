@@ -21,7 +21,7 @@ class Controller:
 
     def start(self):
         now = time.perf_counter_ns()
-        self.simulated_time = now
+        # self.simulated_time = 0
         self.start_time = now
 
     def add_input(self, timestamp, sc, event, value=None):
@@ -31,6 +31,10 @@ class Controller:
         else:
             callback = raise_method
         self.add_input_lowlevel(timestamp, callback, event)
+
+    def add_input_relative(self, sc, event, value=None, time_offset=0):
+        timestamp = self.simulated_time + time_offset
+        self.add_input(timestamp, sc, event, value)
 
     def add_input_lowlevel(self, timestamp, callback, debug):
         e = QueueEntry(timestamp, callback, debug)
@@ -53,7 +57,7 @@ class Controller:
         return self.event_queue[-1].timestamp
 
     def get_simtime_seconds(self):
-        return (self.simulated_time - self.start_time) / 1000000000
+        return (self.simulated_time) / 1000000000
 
 # Our own timer service, used by the statechart.
 # Much better than YAKINDU's pathetic timer service.
@@ -99,8 +103,10 @@ class RealTimeSimulation:
 
     def add_input(self, sc, event, value=None):
         now = time.perf_counter_ns() + self.purposefully_behind
-        self.controller.add_input(now, sc, event, value)
+        timestamp = now - self.controller.start_time
+        self.controller.add_input(timestamp, sc, event, value)
         self.interrupt()
+        return timestamp
 
     def interrupt(self):
         if self.scheduled_id is not None:
@@ -109,15 +115,15 @@ class RealTimeSimulation:
         if self.controller.have_event():
             now = time.perf_counter_ns()
             earliest = self.controller.get_earliest()
-            sleep_time = earliest - now
+            sleep_time = earliest - (now - self.controller.start_time)
 
-            if sleep_time < 0:
-                self.purposefully_behind = sleep_time
-            else:
-                self.purposefully_behind = 0
+            # if sleep_time < 0:
+            #     self.purposefully_behind = sleep_time
+            # else:
+            #     self.purposefully_behind = 0
 
             def callback():
-                self.controller.run_until(now + self.purposefully_behind)
+                self.controller.run_until((now - self.controller.start_time) + self.purposefully_behind)
                 self.update_callback()
                 self.interrupt()
 
