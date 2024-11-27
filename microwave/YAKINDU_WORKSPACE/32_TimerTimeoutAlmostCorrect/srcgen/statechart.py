@@ -15,10 +15,10 @@ class Statechart:
 		""" State Enum
 		"""
 		(
-			main_region_orthogonal_state,
-			main_region_orthogonal_state_r1magnetron_on,
-			main_region_orthogonal_state_r1magnetron_off,
-			main_region_orthogonal_state_r2time_control,
+			main_region_door_closed,
+			main_region_door_closed_r1magnetron_on,
+			main_region_door_closed_r1magnetron_off,
+			main_region_door_open,
 			null_state
 		) = range(5)
 	
@@ -48,8 +48,8 @@ class Statechart:
 		# enumeration of all states:
 		self.__State = Statechart.State
 		self.__state_conf_vector_changed = None
-		self.__state_vector = [None] * 2
-		for __state_index in range(2):
+		self.__state_vector = [None] * 1
+		for __state_index in range(1):
 			self.__state_vector[__state_index] = self.State.null_state
 		
 		# for timed statechart:
@@ -60,12 +60,11 @@ class Statechart:
 		#Default init sequence for statechart Statechart
 		self.__remaining_time = 0
 		self.__is_executing = False
-		self.__state_conf_vector_position = None
 	
 	def is_active(self):
 		"""Checks if the state machine is active.
 		"""
-		return self.__state_vector[0] is not self.__State.null_state or self.__state_vector[1] is not self.__State.null_state
+		return self.__state_vector[0] is not self.__State.null_state
 	
 	def is_final(self):
 		"""Checks if the statemachine is final.
@@ -77,15 +76,15 @@ class Statechart:
 		"""Checks if the state is currently active.
 		"""
 		s = state
-		if s == self.__State.main_region_orthogonal_state:
-			return (self.__state_vector[0] >= self.__State.main_region_orthogonal_state)\
-				and (self.__state_vector[0] <= self.__State.main_region_orthogonal_state_r2time_control)
-		if s == self.__State.main_region_orthogonal_state_r1magnetron_on:
-			return self.__state_vector[0] == self.__State.main_region_orthogonal_state_r1magnetron_on
-		if s == self.__State.main_region_orthogonal_state_r1magnetron_off:
-			return self.__state_vector[0] == self.__State.main_region_orthogonal_state_r1magnetron_off
-		if s == self.__State.main_region_orthogonal_state_r2time_control:
-			return self.__state_vector[1] == self.__State.main_region_orthogonal_state_r2time_control
+		if s == self.__State.main_region_door_closed:
+			return (self.__state_vector[0] >= self.__State.main_region_door_closed)\
+				and (self.__state_vector[0] <= self.__State.main_region_door_closed_r1magnetron_off)
+		if s == self.__State.main_region_door_closed_r1magnetron_on:
+			return self.__state_vector[0] == self.__State.main_region_door_closed_r1magnetron_on
+		if s == self.__State.main_region_door_closed_r1magnetron_off:
+			return self.__state_vector[0] == self.__State.main_region_door_closed_r1magnetron_off
+		if s == self.__State.main_region_door_open:
+			return self.__state_vector[0] == self.__State.main_region_door_open
 		return False
 		
 	def time_elapsed(self, event_id):
@@ -164,50 +163,46 @@ class Statechart:
 		"""
 		self.door_closed = True
 	
-	def __entry_action_main_region_orthogonal_state_r1_magnetron_on(self):
+	def __entry_action_main_region_door_closed_r1_magnetron_on(self):
 		"""Entry action for state 'MagnetronOn'..
 		"""
 		#Entry action for state 'MagnetronOn'.
 		self.timer_service.set_timer(self, 0, (1 * 1000), False)
 		self.turn_magnetron_on_observable.next()
 		
-	def __exit_action_main_region_orthogonal_state_r1_magnetron_on(self):
+	def __exit_action_main_region_door_closed_r1_magnetron_on(self):
 		"""Exit action for state 'MagnetronOn'..
 		"""
 		#Exit action for state 'MagnetronOn'.
 		self.timer_service.unset_timer(self, 0)
 		self.turn_magnetron_off_observable.next()
 		
-	def __enter_sequence_main_region_orthogonal_state_default(self):
-		"""'default' enter sequence for state OrthogonalState.
+	def __enter_sequence_main_region_door_closed_default(self):
+		"""'default' enter sequence for state doorClosed.
 		"""
-		#'default' enter sequence for state OrthogonalState
-		self.__enter_sequence_main_region_orthogonal_state_r1_default()
-		self.__enter_sequence_main_region_orthogonal_state_r2_default()
+		#'default' enter sequence for state doorClosed
+		self.__enter_sequence_main_region_door_closed_r1_default()
 		
-	def __enter_sequence_main_region_orthogonal_state_r1_magnetron_on_default(self):
+	def __enter_sequence_main_region_door_closed_r1_magnetron_on_default(self):
 		"""'default' enter sequence for state MagnetronOn.
 		"""
 		#'default' enter sequence for state MagnetronOn
-		self.__entry_action_main_region_orthogonal_state_r1_magnetron_on()
-		self.__state_vector[0] = self.State.main_region_orthogonal_state_r1magnetron_on
-		self.__state_conf_vector_position = 0
+		self.__entry_action_main_region_door_closed_r1_magnetron_on()
+		self.__state_vector[0] = self.State.main_region_door_closed_r1magnetron_on
 		self.__state_conf_vector_changed = True
 		
-	def __enter_sequence_main_region_orthogonal_state_r1_magnetron_off_default(self):
+	def __enter_sequence_main_region_door_closed_r1_magnetron_off_default(self):
 		"""'default' enter sequence for state MagnetronOff.
 		"""
 		#'default' enter sequence for state MagnetronOff
-		self.__state_vector[0] = self.State.main_region_orthogonal_state_r1magnetron_off
-		self.__state_conf_vector_position = 0
+		self.__state_vector[0] = self.State.main_region_door_closed_r1magnetron_off
 		self.__state_conf_vector_changed = True
 		
-	def __enter_sequence_main_region_orthogonal_state_r2_time_control_default(self):
-		"""'default' enter sequence for state TimeControl.
+	def __enter_sequence_main_region_door_open_default(self):
+		"""'default' enter sequence for state DoorOpen.
 		"""
-		#'default' enter sequence for state TimeControl
-		self.__state_vector[1] = self.State.main_region_orthogonal_state_r2time_control
-		self.__state_conf_vector_position = 1
+		#'default' enter sequence for state DoorOpen
+		self.__state_vector[0] = self.State.main_region_door_open
 		self.__state_conf_vector_changed = True
 		
 	def __enter_sequence_main_region_default(self):
@@ -216,80 +211,80 @@ class Statechart:
 		#'default' enter sequence for region main region
 		self.__react_main_region__entry_default()
 		
-	def __enter_sequence_main_region_orthogonal_state_r1_default(self):
+	def __enter_sequence_main_region_door_closed_r1_default(self):
 		"""'default' enter sequence for region r1.
 		"""
 		#'default' enter sequence for region r1
-		self.__react_main_region_orthogonal_state_r1__entry_default()
+		self.__react_main_region_door_closed_r1__entry_default()
 		
-	def __enter_sequence_main_region_orthogonal_state_r2_default(self):
-		"""'default' enter sequence for region r2.
+	def __exit_sequence_main_region_door_closed(self):
+		"""Default exit sequence for state doorClosed.
 		"""
-		#'default' enter sequence for region r2
-		self.__react_main_region_orthogonal_state_r2__entry_default()
+		#Default exit sequence for state doorClosed
+		self.__exit_sequence_main_region_door_closed_r1()
 		
-	def __exit_sequence_main_region_orthogonal_state_r1_magnetron_on(self):
+	def __exit_sequence_main_region_door_closed_r1_magnetron_on(self):
 		"""Default exit sequence for state MagnetronOn.
 		"""
 		#Default exit sequence for state MagnetronOn
 		self.__state_vector[0] = self.State.null_state
-		self.__state_conf_vector_position = 0
-		self.__exit_action_main_region_orthogonal_state_r1_magnetron_on()
+		self.__exit_action_main_region_door_closed_r1_magnetron_on()
 		
-	def __exit_sequence_main_region_orthogonal_state_r1_magnetron_off(self):
+	def __exit_sequence_main_region_door_closed_r1_magnetron_off(self):
 		"""Default exit sequence for state MagnetronOff.
 		"""
 		#Default exit sequence for state MagnetronOff
 		self.__state_vector[0] = self.State.null_state
-		self.__state_conf_vector_position = 0
 		
-	def __exit_sequence_main_region_orthogonal_state_r2_time_control(self):
-		"""Default exit sequence for state TimeControl.
+	def __exit_sequence_main_region_door_open(self):
+		"""Default exit sequence for state DoorOpen.
 		"""
-		#Default exit sequence for state TimeControl
-		self.__state_vector[1] = self.State.null_state
-		self.__state_conf_vector_position = 1
+		#Default exit sequence for state DoorOpen
+		self.__state_vector[0] = self.State.null_state
 		
 	def __exit_sequence_main_region(self):
 		"""Default exit sequence for region main region.
 		"""
 		#Default exit sequence for region main region
 		state = self.__state_vector[0]
-		if state == self.State.main_region_orthogonal_state_r1magnetron_on:
-			self.__exit_sequence_main_region_orthogonal_state_r1_magnetron_on()
-		elif state == self.State.main_region_orthogonal_state_r1magnetron_off:
-			self.__exit_sequence_main_region_orthogonal_state_r1_magnetron_off()
-		state = self.__state_vector[1]
-		if state == self.State.main_region_orthogonal_state_r2time_control:
-			self.__exit_sequence_main_region_orthogonal_state_r2_time_control()
+		if state == self.State.main_region_door_closed_r1magnetron_on:
+			self.__exit_sequence_main_region_door_closed_r1_magnetron_on()
+		elif state == self.State.main_region_door_closed_r1magnetron_off:
+			self.__exit_sequence_main_region_door_closed_r1_magnetron_off()
+		elif state == self.State.main_region_door_open:
+			self.__exit_sequence_main_region_door_open()
 		
-	def __react_main_region_orthogonal_state_r1__choice_0(self):
+	def __exit_sequence_main_region_door_closed_r1(self):
+		"""Default exit sequence for region r1.
+		"""
+		#Default exit sequence for region r1
+		state = self.__state_vector[0]
+		if state == self.State.main_region_door_closed_r1magnetron_on:
+			self.__exit_sequence_main_region_door_closed_r1_magnetron_on()
+		elif state == self.State.main_region_door_closed_r1magnetron_off:
+			self.__exit_sequence_main_region_door_closed_r1_magnetron_off()
+		
+	def __react_main_region_door_closed_r1__choice_0(self):
 		"""The reactions of state null..
 		"""
 		#The reactions of state null.
 		if self.__remaining_time == 0:
 			self.ring_bell_observable.next()
-			self.__enter_sequence_main_region_orthogonal_state_r1_magnetron_off_default()
+			self.__enter_sequence_main_region_door_closed_r1_magnetron_off_default()
 		else:
-			self.__enter_sequence_main_region_orthogonal_state_r1_magnetron_on_default()
+			self.__enter_sequence_main_region_door_closed_r1_magnetron_on_default()
 		
-	def __react_main_region_orthogonal_state_r1__entry_default(self):
+	def __react_main_region_door_closed_r1__entry_default(self):
 		"""Default react sequence for initial entry .
 		"""
 		#Default react sequence for initial entry 
-		self.__enter_sequence_main_region_orthogonal_state_r1_magnetron_off_default()
-		
-	def __react_main_region_orthogonal_state_r2__entry_default(self):
-		"""Default react sequence for initial entry .
-		"""
-		#Default react sequence for initial entry 
-		self.__enter_sequence_main_region_orthogonal_state_r2_time_control_default()
+		self.__enter_sequence_main_region_door_closed_r1_magnetron_off_default()
 		
 	def __react_main_region__entry_default(self):
 		"""Default react sequence for initial entry .
 		"""
 		#Default react sequence for initial entry 
-		self.__enter_sequence_main_region_orthogonal_state_default()
+		self.__enter_sequence_main_region_door_closed_default()
 		
 	def __react(self, transitioned_before):
 		"""Implementation of __react function.
@@ -298,66 +293,68 @@ class Statechart:
 		return transitioned_before
 	
 	
-	def __main_region_orthogonal_state_react(self, transitioned_before):
-		"""Implementation of __main_region_orthogonal_state_react function.
+	def __main_region_door_closed_react(self, transitioned_before):
+		"""Implementation of __main_region_door_closed_react function.
 		"""
-		#The reactions of state OrthogonalState.
-		return self.__react(transitioned_before)
+		#The reactions of state doorClosed.
+		transitioned_after = self.__react(transitioned_before)
+		if transitioned_after < 0:
+			if self.door_opened:
+				self.__exit_sequence_main_region_door_closed()
+				self.__enter_sequence_main_region_door_open_default()
+				transitioned_after = 0
+		return transitioned_after
 	
 	
-	def __main_region_orthogonal_state_r1_magnetron_on_react(self, transitioned_before):
-		"""Implementation of __main_region_orthogonal_state_r1_magnetron_on_react function.
+	def __main_region_door_closed_r1_magnetron_on_react(self, transitioned_before):
+		"""Implementation of __main_region_door_closed_r1_magnetron_on_react function.
 		"""
 		#The reactions of state MagnetronOn.
-		transitioned_after = self.__main_region_orthogonal_state_react(transitioned_before)
+		transitioned_after = self.__main_region_door_closed_react(transitioned_before)
 		if transitioned_after < 0:
 			if self.stop_pressed:
-				self.__exit_sequence_main_region_orthogonal_state_r1_magnetron_on()
-				self.__enter_sequence_main_region_orthogonal_state_r1_magnetron_off_default()
+				self.__exit_sequence_main_region_door_closed_r1_magnetron_on()
+				self.__enter_sequence_main_region_door_closed_r1_magnetron_off_default()
 				transitioned_after = 0
 			elif self.__time_events[0]:
-				self.__exit_sequence_main_region_orthogonal_state_r1_magnetron_on()
+				self.__exit_sequence_main_region_door_closed_r1_magnetron_on()
 				self.__remaining_time = self.__remaining_time - 1
 				self.set_displayed_time_observable.next(self.__remaining_time)
 				self.__time_events[0] = False
-				self.__react_main_region_orthogonal_state_r1__choice_0()
+				self.__react_main_region_door_closed_r1__choice_0()
 				transitioned_after = 0
 		return transitioned_after
 	
 	
-	def __main_region_orthogonal_state_r1_magnetron_off_react(self, transitioned_before):
-		"""Implementation of __main_region_orthogonal_state_r1_magnetron_off_react function.
+	def __main_region_door_closed_r1_magnetron_off_react(self, transitioned_before):
+		"""Implementation of __main_region_door_closed_r1_magnetron_off_react function.
 		"""
 		#The reactions of state MagnetronOff.
-		transitioned_after = self.__main_region_orthogonal_state_react(transitioned_before)
+		transitioned_after = self.__main_region_door_closed_react(transitioned_before)
 		if transitioned_after < 0:
 			if self.start_pressed:
-				self.__exit_sequence_main_region_orthogonal_state_r1_magnetron_off()
-				self.__remaining_time = 10 if self.__remaining_time == 0 else self.__remaining_time
-				self.set_displayed_time_observable.next(self.__remaining_time)
-				self.__enter_sequence_main_region_orthogonal_state_r1_magnetron_on_default()
+				self.__exit_sequence_main_region_door_closed_r1_magnetron_off()
+				self.__enter_sequence_main_region_door_closed_r1_magnetron_on_default()
 				transitioned_after = 0
-			elif self.stop_pressed:
-				self.__exit_sequence_main_region_orthogonal_state_r1_magnetron_off()
-				self.__remaining_time = 0
-				self.set_displayed_time_observable.next(0)
-				self.__enter_sequence_main_region_orthogonal_state_r1_magnetron_off_default()
+			elif self.increase_time_pressed:
+				self.__exit_sequence_main_region_door_closed_r1_magnetron_off()
+				self.__remaining_time = self.__remaining_time + 1
+				self.set_displayed_time_observable.next(self.__remaining_time)
+				self.__enter_sequence_main_region_door_closed_r1_magnetron_off_default()
 				transitioned_after = 0
 		return transitioned_after
 	
 	
-	def __main_region_orthogonal_state_r2_time_control_react(self, transitioned_before):
-		"""Implementation of __main_region_orthogonal_state_r2_time_control_react function.
+	def __main_region_door_open_react(self, transitioned_before):
+		"""Implementation of __main_region_door_open_react function.
 		"""
-		#The reactions of state TimeControl.
-		transitioned_after = transitioned_before
-		if transitioned_after < 1:
-			if self.increase_time_pressed:
-				self.__exit_sequence_main_region_orthogonal_state_r2_time_control()
-				self.__remaining_time = self.__remaining_time + 10
-				self.set_displayed_time_observable.next(self.__remaining_time)
-				self.__enter_sequence_main_region_orthogonal_state_r2_time_control_default()
-				transitioned_after = 1
+		#The reactions of state DoorOpen.
+		transitioned_after = self.__react(transitioned_before)
+		if transitioned_after < 0:
+			if self.door_closed:
+				self.__exit_sequence_main_region_door_open()
+				self.__enter_sequence_main_region_door_closed_default()
+				transitioned_after = 0
 		return transitioned_after
 	
 	
@@ -375,17 +372,13 @@ class Statechart:
 	def __micro_step(self):
 		"""Implementation of __micro_step function.
 		"""
-		transitioned = -1
-		self.__state_conf_vector_position = 0
 		state = self.__state_vector[0]
-		if state == self.State.main_region_orthogonal_state_r1magnetron_on:
-			transitioned = self.__main_region_orthogonal_state_r1_magnetron_on_react(transitioned)
-		elif state == self.State.main_region_orthogonal_state_r1magnetron_off:
-			transitioned = self.__main_region_orthogonal_state_r1_magnetron_off_react(transitioned)
-		if self.__state_conf_vector_position < 1:
-			state = self.__state_vector[1]
-			if state == self.State.main_region_orthogonal_state_r2time_control:
-				self.__main_region_orthogonal_state_r2_time_control_react(transitioned)
+		if state == self.State.main_region_door_closed_r1magnetron_on:
+			self.__main_region_door_closed_r1_magnetron_on_react(-1)
+		elif state == self.State.main_region_door_closed_r1magnetron_off:
+			self.__main_region_door_closed_r1_magnetron_off_react(-1)
+		elif state == self.State.main_region_door_open:
+			self.__main_region_door_open_react(-1)
 	
 	
 	def run_cycle(self):

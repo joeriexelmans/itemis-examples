@@ -17,8 +17,9 @@ class Statechart:
 		(
 			main_region_magnetron_off,
 			main_region_magnetron_on,
+			main_region_door_open,
 			null_state
-		) = range(3)
+		) = range(4)
 	
 	
 	def __init__(self):
@@ -70,6 +71,8 @@ class Statechart:
 			return self.__state_vector[0] == self.__State.main_region_magnetron_off
 		if s == self.__State.main_region_magnetron_on:
 			return self.__state_vector[0] == self.__State.main_region_magnetron_on
+		if s == self.__State.main_region_door_open:
+			return self.__state_vector[0] == self.__State.main_region_door_open
 		return False
 		
 	def __execute_queued_event(self, func):
@@ -162,6 +165,13 @@ class Statechart:
 		self.__state_vector[0] = self.State.main_region_magnetron_on
 		self.__state_conf_vector_changed = True
 		
+	def __enter_sequence_main_region_door_open_default(self):
+		"""'default' enter sequence for state DoorOpen.
+		"""
+		#'default' enter sequence for state DoorOpen
+		self.__state_vector[0] = self.State.main_region_door_open
+		self.__state_conf_vector_changed = True
+		
 	def __enter_sequence_main_region_default(self):
 		"""'default' enter sequence for region main region.
 		"""
@@ -181,6 +191,12 @@ class Statechart:
 		self.__state_vector[0] = self.State.null_state
 		self.__exit_action_main_region_magnetron_on()
 		
+	def __exit_sequence_main_region_door_open(self):
+		"""Default exit sequence for state DoorOpen.
+		"""
+		#Default exit sequence for state DoorOpen
+		self.__state_vector[0] = self.State.null_state
+		
 	def __exit_sequence_main_region(self):
 		"""Default exit sequence for region main region.
 		"""
@@ -190,6 +206,8 @@ class Statechart:
 			self.__exit_sequence_main_region_magnetron_off()
 		elif state == self.State.main_region_magnetron_on:
 			self.__exit_sequence_main_region_magnetron_on()
+		elif state == self.State.main_region_door_open:
+			self.__exit_sequence_main_region_door_open()
 		
 	def __react_main_region__entry_default(self):
 		"""Default react sequence for initial entry .
@@ -214,6 +232,10 @@ class Statechart:
 				self.__exit_sequence_main_region_magnetron_off()
 				self.__enter_sequence_main_region_magnetron_on_default()
 				transitioned_after = 0
+			elif self.door_opened:
+				self.__exit_sequence_main_region_magnetron_off()
+				self.__enter_sequence_main_region_door_open_default()
+				transitioned_after = 0
 		return transitioned_after
 	
 	
@@ -225,6 +247,23 @@ class Statechart:
 		if transitioned_after < 0:
 			if self.stop_pressed:
 				self.__exit_sequence_main_region_magnetron_on()
+				self.__enter_sequence_main_region_magnetron_off_default()
+				transitioned_after = 0
+			elif self.door_opened:
+				self.__exit_sequence_main_region_magnetron_on()
+				self.__enter_sequence_main_region_door_open_default()
+				transitioned_after = 0
+		return transitioned_after
+	
+	
+	def __main_region_door_open_react(self, transitioned_before):
+		"""Implementation of __main_region_door_open_react function.
+		"""
+		#The reactions of state DoorOpen.
+		transitioned_after = self.__react(transitioned_before)
+		if transitioned_after < 0:
+			if self.door_closed:
+				self.__exit_sequence_main_region_door_open()
 				self.__enter_sequence_main_region_magnetron_off_default()
 				transitioned_after = 0
 		return transitioned_after
@@ -248,6 +287,8 @@ class Statechart:
 			self.__main_region_magnetron_off_react(-1)
 		elif state == self.State.main_region_magnetron_on:
 			self.__main_region_magnetron_on_react(-1)
+		elif state == self.State.main_region_door_open:
+			self.__main_region_door_open_react(-1)
 	
 	
 	def run_cycle(self):
@@ -293,6 +334,7 @@ class Statechart:
 		self.__is_executing = True
 		#Default exit sequence for statechart Statechart
 		self.__exit_sequence_main_region()
+		self.__state_vector[0] = self.State.null_state
 		self.__is_executing = False
 	
 	

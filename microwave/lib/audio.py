@@ -16,14 +16,12 @@ try:
     def play_running():
         global playing
         if playing is None:
-            # playing = running.play()
-            pass
+            playing = running.play()
 
     def stop_running():
         global playing
         if playing is not None:
-            # playing.stop()
-            pass
+            playing.stop()
             playing = None
 
 except ImportError:

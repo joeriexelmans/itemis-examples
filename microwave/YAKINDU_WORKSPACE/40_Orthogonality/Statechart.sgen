@@ -1,0 +1,15 @@
+GeneratorModel for create::python {
+
+	const PROJECT : string = "40_Orthogonality"
+
+	const FOLDER : string = "srcgen"
+
+	statechart Statechart {
+
+		feature Outlet {
+			targetProject = PROJECT
+			targetFolder = FOLDER
+			libraryTargetFolder = "src"
+		}
+	}
+}

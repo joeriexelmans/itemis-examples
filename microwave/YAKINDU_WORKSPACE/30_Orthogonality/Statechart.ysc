@@ -170,6 +170,18 @@
           <styles xsi:type="notation:NamedStyle" xmi:id="_OGqG4qxQEe2w-MF-SB4lMg" name="allowColors"/>
           <layoutConstraint xsi:type="notation:Bounds" xmi:id="_OGqG46xQEe2w-MF-SB4lMg" x="177" y="11"/>
         </children>
+        <children xsi:type="notation:Shape" xmi:id="_LM3BEI_SEe6BZdbMZ2j9yg" type="Note" fontName="Verdana" description="here, the timer&#xA;can also be increased&#xA;while the magnetron is running." fillColor="13369343" transparency="0" lineColor="6737151" lineWidth="1">
+          <children xsi:type="notation:BasicDecorationNode" xmi:id="_LM4PMI_SEe6BZdbMZ2j9yg" type="DiagramName">
+            <element xsi:nil="true"/>
+          </children>
+          <children xsi:type="notation:BasicDecorationNode" xmi:id="_LM4PMY_SEe6BZdbMZ2j9yg" type="Description">
+            <element xsi:nil="true"/>
+          </children>
+          <styles xsi:type="notation:TextStyle" xmi:id="_LM3BEY_SEe6BZdbMZ2j9yg"/>
+          <styles xsi:type="notation:LineTypeStyle" xmi:id="_LM3BEo_SEe6BZdbMZ2j9yg"/>
+          <element xsi:nil="true"/>
+          <layoutConstraint xsi:type="notation:Bounds" xmi:id="_LM3BE4_SEe6BZdbMZ2j9yg" x="1443" y="207" width="199" height="65"/>
+        </children>
         <layoutConstraint xsi:type="notation:Bounds" xmi:id="_D1kIMKxEEe2zPcKEzbpeTQ"/>
       </children>
       <styles xsi:type="notation:ShapeStyle" xmi:id="_D1kIMaxEEe2zPcKEzbpeTQ" fontName="Verdana" fillColor="16448250" lineColor="12632256"/>

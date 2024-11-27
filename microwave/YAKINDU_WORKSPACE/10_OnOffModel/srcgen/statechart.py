@@ -138,33 +138,39 @@ class Statechart:
 	def __enter_sequence_main_region_magnetron_off_default(self):
 		"""'default' enter sequence for state MagnetronOff.
 		"""
+		#'default' enter sequence for state MagnetronOff
 		self.__state_vector[0] = self.State.main_region_magnetron_off
 		self.__state_conf_vector_changed = True
 		
 	def __enter_sequence_main_region_magnetron_on_default(self):
 		"""'default' enter sequence for state MagnetronOn.
 		"""
+		#'default' enter sequence for state MagnetronOn
 		self.__state_vector[0] = self.State.main_region_magnetron_on
 		self.__state_conf_vector_changed = True
 		
 	def __enter_sequence_main_region_default(self):
 		"""'default' enter sequence for region main region.
 		"""
+		#'default' enter sequence for region main region
 		self.__react_main_region__entry_default()
 		
 	def __exit_sequence_main_region_magnetron_off(self):
 		"""Default exit sequence for state MagnetronOff.
 		"""
+		#Default exit sequence for state MagnetronOff
 		self.__state_vector[0] = self.State.null_state
 		
 	def __exit_sequence_main_region_magnetron_on(self):
 		"""Default exit sequence for state MagnetronOn.
 		"""
+		#Default exit sequence for state MagnetronOn
 		self.__state_vector[0] = self.State.null_state
 		
 	def __exit_sequence_main_region(self):
 		"""Default exit sequence for region main region.
 		"""
+		#Default exit sequence for region main region
 		state = self.__state_vector[0]
 		if state == self.State.main_region_magnetron_off:
 			self.__exit_sequence_main_region_magnetron_off()
@@ -174,17 +180,20 @@ class Statechart:
 	def __react_main_region__entry_default(self):
 		"""Default react sequence for initial entry .
 		"""
+		#Default react sequence for initial entry 
 		self.__enter_sequence_main_region_magnetron_off_default()
 		
 	def __react(self, transitioned_before):
 		"""Implementation of __react function.
 		"""
+		#State machine reactions.
 		return transitioned_before
 	
 	
 	def __main_region_magnetron_off_react(self, transitioned_before):
 		"""Implementation of __main_region_magnetron_off_react function.
 		"""
+		#The reactions of state MagnetronOff.
 		transitioned_after = self.__react(transitioned_before)
 		if transitioned_after < 0:
 			if self.start_pressed:
@@ -198,6 +207,7 @@ class Statechart:
 	def __main_region_magnetron_on_react(self, transitioned_before):
 		"""Implementation of __main_region_magnetron_on_react function.
 		"""
+		#The reactions of state MagnetronOn.
 		transitioned_after = self.__react(transitioned_before)
 		if transitioned_after < 0:
 			if self.stop_pressed:
@@ -231,6 +241,7 @@ class Statechart:
 	def run_cycle(self):
 		"""Implementation of run_cycle function.
 		"""
+		#Performs a 'run to completion' step.
 		if self.__is_executing:
 			return
 		self.__is_executing = True
@@ -252,9 +263,11 @@ class Statechart:
 	def enter(self):
 		"""Implementation of enter function.
 		"""
+		#Activates the state machine.
 		if self.__is_executing:
 			return
 		self.__is_executing = True
+		#Default enter sequence for statechart Statechart
 		self.__enter_sequence_main_region_default()
 		self.__is_executing = False
 	
@@ -262,10 +275,13 @@ class Statechart:
 	def exit(self):
 		"""Implementation of exit function.
 		"""
+		#Deactivates the state machine.
 		if self.__is_executing:
 			return
 		self.__is_executing = True
+		#Default exit sequence for statechart Statechart
 		self.__exit_sequence_main_region()
+		self.__state_vector[0] = self.State.null_state
 		self.__is_executing = False
 	
 	
