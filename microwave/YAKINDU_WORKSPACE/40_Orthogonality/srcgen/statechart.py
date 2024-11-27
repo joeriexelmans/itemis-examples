@@ -287,19 +287,23 @@ class Statechart:
 		"""
 		#Default exit sequence for state doorClosed
 		self.__exit_sequence_main_region_orthogonal_state_r1_door_closed_r1()
+		self.__state_vector[0] = self.State.main_region_orthogonal_state
+		self.__state_conf_vector_position = 0
 		
 	def __exit_sequence_main_region_orthogonal_state_r1_door_closed_r1_magnetron_on(self):
 		"""Default exit sequence for state MagnetronOn.
 		"""
 		#Default exit sequence for state MagnetronOn
 		self.__exit_sequence_main_region_orthogonal_state_r1_door_closed_r1_magnetron_on_r1()
+		self.__state_vector[0] = self.State.main_region_orthogonal_state_r1door_closed
+		self.__state_conf_vector_position = 0
 		self.__exit_action_main_region_orthogonal_state_r1_door_closed_r1_magnetron_on()
 		
 	def __exit_sequence_main_region_orthogonal_state_r1_door_closed_r1_magnetron_on_r1_check_time(self):
 		"""Default exit sequence for state CheckTime.
 		"""
 		#Default exit sequence for state CheckTime
-		self.__state_vector[0] = self.State.null_state
+		self.__state_vector[0] = self.State.main_region_orthogonal_state_r1door_closed_r1magnetron_on
 		self.__state_conf_vector_position = 0
 		self.__exit_action_main_region_orthogonal_state_r1_door_closed_r1_magnetron_on_r1_check_time()
 		
@@ -307,21 +311,21 @@ class Statechart:
 		"""Default exit sequence for state MagnetronOff.
 		"""
 		#Default exit sequence for state MagnetronOff
-		self.__state_vector[0] = self.State.null_state
+		self.__state_vector[0] = self.State.main_region_orthogonal_state_r1door_closed
 		self.__state_conf_vector_position = 0
 		
 	def __exit_sequence_main_region_orthogonal_state_r1_door_open(self):
 		"""Default exit sequence for state DoorOpen.
 		"""
 		#Default exit sequence for state DoorOpen
-		self.__state_vector[0] = self.State.null_state
+		self.__state_vector[0] = self.State.main_region_orthogonal_state
 		self.__state_conf_vector_position = 0
 		
 	def __exit_sequence_main_region_orthogonal_state_r2_time_control(self):
 		"""Default exit sequence for state TimeControl.
 		"""
 		#Default exit sequence for state TimeControl
-		self.__state_vector[1] = self.State.null_state
+		self.__state_vector[1] = self.State.main_region_orthogonal_state
 		self.__state_conf_vector_position = 1
 		
 	def __exit_sequence_main_region(self):
@@ -329,7 +333,11 @@ class Statechart:
 		"""
 		#Default exit sequence for region main region
 		state = self.__state_vector[0]
-		if state == self.State.main_region_orthogonal_state_r1door_closed_r1magnetron_on_r1check_time:
+		if state == self.State.main_region_orthogonal_state_r1door_closed:
+			self.__exit_sequence_main_region_orthogonal_state_r1_door_closed()
+		elif state == self.State.main_region_orthogonal_state_r1door_closed_r1magnetron_on:
+			self.__exit_sequence_main_region_orthogonal_state_r1_door_closed_r1_magnetron_on()
+		elif state == self.State.main_region_orthogonal_state_r1door_closed_r1magnetron_on_r1check_time:
 			self.__exit_sequence_main_region_orthogonal_state_r1_door_closed_r1_magnetron_on_r1_check_time()
 			self.__exit_action_main_region_orthogonal_state_r1_door_closed_r1_magnetron_on()
 		elif state == self.State.main_region_orthogonal_state_r1door_closed_r1magnetron_off:
@@ -345,7 +353,9 @@ class Statechart:
 		"""
 		#Default exit sequence for region r1
 		state = self.__state_vector[0]
-		if state == self.State.main_region_orthogonal_state_r1door_closed_r1magnetron_on_r1check_time:
+		if state == self.State.main_region_orthogonal_state_r1door_closed_r1magnetron_on:
+			self.__exit_sequence_main_region_orthogonal_state_r1_door_closed_r1_magnetron_on()
+		elif state == self.State.main_region_orthogonal_state_r1door_closed_r1magnetron_on_r1check_time:
 			self.__exit_sequence_main_region_orthogonal_state_r1_door_closed_r1_magnetron_on_r1_check_time()
 			self.__exit_action_main_region_orthogonal_state_r1_door_closed_r1_magnetron_on()
 		elif state == self.State.main_region_orthogonal_state_r1door_closed_r1magnetron_off:
@@ -575,6 +585,9 @@ class Statechart:
 		self.__is_executing = True
 		#Default exit sequence for statechart Statechart
 		self.__exit_sequence_main_region()
+		self.__state_vector[0] = self.State.null_state
+		self.__state_vector[1] = self.State.null_state
+		self.__state_conf_vector_position = 1
 		self.__is_executing = False
 	
 	

@@ -15,13 +15,16 @@ SCENARIOS = [
         (4262358465, "door_opened", None),
     ],
     "output_trace": [
+        # start button was pressed, setting timer to 10 and starting the microwave
         (1739451957, "set_displayed_time", 10),
         (1739451957, "turn_magnetron_on", None),
+        # timer counts down:
         (2739451957, "set_displayed_time", 9),
         (3739451957, "set_displayed_time", 8),
+        # door is opened:
         (4262358465, "turn_magnetron_off", None),
     ],
-}
+},
 ]
 
 IDEMPOTENT = [

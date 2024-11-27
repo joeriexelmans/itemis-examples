@@ -1,0 +1,23 @@
+When explaining Statecharts to students, must NOT forget:
+
+  - run generated code for final model
+
+  - introduce SuS  : what are the input/output events
+
+  - show empty model in YAKINDU
+
+  - show on/off model
+
+      - debug in YAKINDU
+
+      - generate code
+
+      - show generated code
+
+      - run the generated code
+
+  - continue with the examples
+
+  - when showing the door-example, run it interactively and turn it into a test case
+
+  - introduce assignment

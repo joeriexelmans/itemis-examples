@@ -10,7 +10,7 @@
           </vertices>
           <vertices xsi:type="sgraph:State" xmi:id="_k_IFsKxLEe2SdOFvAhnR8A" specification="entry / raise turnMagnetronOn&#xA;exit / raise turnMagnetronOff" name="MagnetronOn" incomingTransitions="_oDRMIKxLEe2SdOFvAhnR8A _QAYMEJAiEe6ymuOU-sr3WA">
             <outgoingTransitions xmi:id="_s1-tMKxLEe2SdOFvAhnR8A" specification="stopPressed" target="_1y9hMKxJEe2SdOFvAhnR8A"/>
-            <outgoingTransitions xmi:id="_QAYMEJAiEe6ymuOU-sr3WA" specification="after 1s /&#xA;remainingTime -= 1;&#xA;raise setDisplayedTime: remainingTime" target="_k_IFsKxLEe2SdOFvAhnR8A"/>
+            <outgoingTransitions xmi:id="_QAYMEJAiEe6ymuOU-sr3WA" specification="after 1s [remainingTime > 0] /&#xA;remainingTime -= 1;&#xA;raise setDisplayedTime: remainingTime" target="_k_IFsKxLEe2SdOFvAhnR8A"/>
             <outgoingTransitions xmi:id="_aBGDEJAiEe6ymuOU-sr3WA" specification="[remainingTime==0] /&#xA;raise ringBell" target="_1y9hMKxJEe2SdOFvAhnR8A"/>
           </vertices>
           <vertices xsi:type="sgraph:State" xmi:id="_1y9hMKxJEe2SdOFvAhnR8A" name="MagnetronOff" incomingTransitions="_2TD9kKxJEe2SdOFvAhnR8A _s1-tMKxLEe2SdOFvAhnR8A _8sA_cJAhEe6ymuOU-sr3WA _aBGDEJAiEe6ymuOU-sr3WA">

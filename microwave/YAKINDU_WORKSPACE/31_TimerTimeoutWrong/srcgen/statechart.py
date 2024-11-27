@@ -309,7 +309,7 @@ class Statechart:
 				self.__exit_sequence_main_region_door_closed_r1_magnetron_on()
 				self.__enter_sequence_main_region_door_closed_r1_magnetron_off_default()
 				transitioned_after = 0
-			elif self.__time_events[0]:
+			elif (self.__time_events[0]) and (self.__remaining_time > 0):
 				self.__exit_sequence_main_region_door_closed_r1_magnetron_on()
 				self.__remaining_time = self.__remaining_time - 1
 				self.set_displayed_time_observable.next(self.__remaining_time)
